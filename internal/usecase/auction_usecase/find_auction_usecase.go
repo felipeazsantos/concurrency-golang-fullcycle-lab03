@@ -1,52 +1,12 @@
-package auctionusercase
+package auctionusecase
 
 import (
 	"context"
-	"time"
 
 	auctionentity "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/entity/auction_entity"
 	internalerror "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/internal_error"
+	bidusecase "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/usecase/bid_usecase"
 )
-
-type AuctionInputDTO struct {
-	ProductName string           `json:"product_name"`
-	Category    string           `json:"category"`
-	Description string           `json:"description"`
-	Condition   ProductCondition `json:"condition"`
-}
-
-type AuctionOutputDTO struct {
-	Id          string           `json:"id"`
-	ProductName string           `json:"product_name"`
-	Category    string           `json:"category"`
-	Description string           `json:"description"`
-	Condition   ProductCondition `json:"condition"`
-	Status      AuctionStatus    `json:"status"`
-	Timestamp   time.Time        `json:"timestamp" time_format:"2006-01-02 15:04:05"`
-}
-
-type ProductCondition int64
-
-type AuctionStatus int64
-
-type AuctionUseCase struct {
-	AuctionRepository auctionentity.AuctionRepositoryInterface
-}
-
-func (au *AuctionUseCase) CreateAuction(ctx context.Context, auctionEntity AuctionInputDTO) *internalerror.InternalError {
-	auction, err := auctionentity.CreateAuction(
-		auctionEntity.ProductName,
-		auctionEntity.Category,
-		auctionEntity.Description,
-		auctionentity.ProductCondition(auctionEntity.Condition),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	return au.AuctionRepository.CreateAuction(ctx, auction)
-}
 
 func (au *AuctionUseCase) FindAuctionById(ctx context.Context, id string) (*AuctionOutputDTO, *internalerror.InternalError) {
 	auction, err := au.AuctionRepository.FindAuctionById(ctx, id)
@@ -86,4 +46,42 @@ func (au *AuctionUseCase) FindAuctions(ctx context.Context, status AuctionStatus
 	}
 
 	return auctionsOutput, nil
+}
+
+func (au *AuctionUseCase) FindWinningBidByAuctionId(ctx context.Context, auctionId string) (*WinningInfoOutputDTO, *internalerror.InternalError) {
+	auction, err := au.AuctionRepository.FindAuctionById(ctx, auctionId)
+	if err != nil {
+		return nil, err
+	}
+
+	auctionOutput := AuctionOutputDTO{
+		Id:          auction.Id,
+		ProductName: auction.ProductName,
+		Category:    auction.Category,
+		Description: auction.Description,
+		Condition:   ProductCondition(auction.Condition),
+		Status:      AuctionStatus(auction.Status),
+		Timestamp:   auction.Timestamp,
+	}
+
+	bidWinning, err := au.BidRepository.FindWinningBidByAuctionId(ctx, auction.Id)
+	if err != nil {
+		return &WinningInfoOutputDTO{
+			Auction: auctionOutput,
+			Bid:     nil,
+		}, err
+	}
+
+	bidOutput := &bidusecase.BidOutputDTO{
+		Id:        bidWinning.Id,
+		UserId:    bidWinning.UserId,
+		AuctionId: bidWinning.AuctionId,
+		Amount:    bidWinning.Amount,
+		Timestamp: bidWinning.Timestamp,
+	}
+
+	return &WinningInfoOutputDTO{
+		Auction: auctionOutput,
+		Bid:     bidOutput,
+	}, nil
 }
