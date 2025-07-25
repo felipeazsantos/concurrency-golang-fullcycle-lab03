@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/configuration/database/mongodb"
+	"github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/configuration/logger"
 	auctioncontroller "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/infra/api/web/controller/auction_controller"
 	bidcontroller "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/infra/api/web/controller/bid_controller"
 	usercontroller "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/infra/api/web/controller/user_controller"
@@ -42,6 +43,8 @@ func main() {
 	router.GET("/bid/:auctionId", bidController.FindBidByAuctionId)
 	router.POST("/bid", bidController.Createbid)
 	router.GET("/user/:userId", userController.FindUserById)
+
+	logger.Info("starting server on port :8080")
 
 	router.Run(":8080")
 }
