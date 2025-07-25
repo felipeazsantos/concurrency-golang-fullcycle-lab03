@@ -59,7 +59,7 @@ func (ar *AuctionRepository) FindAuctions(
 	}
 
 	if productName != "" {
-		filter["product_name"] = primitive.Regex{
+		filter["productName"] = primitive.Regex{
 			Pattern: productName,
 			Options: "i",
 		}
