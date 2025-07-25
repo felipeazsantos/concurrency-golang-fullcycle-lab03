@@ -1,6 +1,10 @@
 package resterr
 
-import "net/http"
+import (
+	"net/http"
+
+	internalerror "github.com/felipeazsantos/concurrency-golang-fullcycle-lab03/internal/internal_error"
+)
 
 type RestErr struct {
 	Message string   `json:"message"`
@@ -42,5 +46,16 @@ func NewNotFoundError(message string) *RestErr {
 		Err:     "not_found",
 		Code:    http.StatusNotFound,
 		Causes:  nil,
+	}
+}
+
+func ConvertError(internalError *internalerror.InternalError) *RestErr {
+	switch internalError.Err {
+	case "bad_requesst":
+		return NewBadRequestError(internalError.Error())
+	case "not_found":
+		return NewNotFoundError(internalError.Error())
+	default:
+		return NewInternalServerError(internalError.Error())
 	}
 }
