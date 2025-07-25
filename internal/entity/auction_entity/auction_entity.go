@@ -36,6 +36,7 @@ type AuctionRepositoryInterface interface {
 	CreateAuction(ctx context.Context, auctionEntity *Auction) *internalerror.InternalError
 	FindAuctionById(ctx context.Context, id string) (*Auction, *internalerror.InternalError)
 	FindAuctions(ctx context.Context, status AuctionStatus, category string, productName string) ([]Auction, *internalerror.InternalError)
+	CloseAuction(ctx context.Context, auctionId string) *internalerror.InternalError
 }
 
 func CreateAuction(productName, category, description string, condition ProductCondition) (*Auction, *internalerror.InternalError) {
