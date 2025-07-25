@@ -2,13 +2,13 @@
 
 This project implements an auction system in Go with concurrency features, using MongoDB as the database and Gin as the web framework.
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Go 1.24.3** or higher
 - **Docker** and **Docker Compose**
 - **MongoDB** (if running locally without Docker)
 
-## 🚀 Development Environment Setup
+## Development Environment Setup
 
 ### 1. Clone the repository
 
@@ -37,7 +37,7 @@ AUCTION_INTERNAL=5m
 go mod download
 ```
 
-## 🐳 Running with Docker (Recommended)
+### 🐳 Running with Docker (Recommended)
 
 ### Option 1: Docker Compose (Simplest)
 
@@ -65,7 +65,7 @@ docker run -d \
   mongo:7.0
 ```
 
-## 🏃‍♂️ Running Locally (Without Docker)
+### Running Locally (Without Docker)
 
 ### 1. Local MongoDB
 
@@ -102,7 +102,7 @@ go build -o auction cmd/auction/main.go
 ./auction
 ```
 
-## 📡 API Endpoints
+### API Endpoints
 
 The application will be available at `http://localhost:8080` with the following endpoints:
 
@@ -119,7 +119,7 @@ The application will be available at `http://localhost:8080` with the following 
 ### Users
 - `GET /user/:userId` - Find user by ID
 
-## 🧪 Running Tests
+### Running Tests
 
 ```bash
 # Run all tests
