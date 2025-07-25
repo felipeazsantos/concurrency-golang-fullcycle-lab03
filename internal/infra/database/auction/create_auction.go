@@ -50,16 +50,15 @@ func (ar *AuctionRepository) CreateAuction(ctx context.Context, auctionEntity *a
 	}
 
 	go func() {
-		select {
-		case <-time.After(getAuctionInterval()):
-			update := bson.M{"$set": bson.M{"status": auctionentity.Completed}}
-			filter := bson.M{"_id": auctionEntityMongo.Id}
+		<-time.After(getAuctionInterval())
+		update := bson.M{"$set": bson.M{"status": auctionentity.Completed}}
+		filter := bson.M{"_id": auctionEntityMongo.Id}
 
-			_, err := ar.Collection.UpdateOne(ctx, filter, update)
-			if err != nil {
-				logger.Error("error trying to update auction status to completed", err)
-				return
-			}
+		_, err := ar.Collection.UpdateOne(ctx, filter, update)
+		if err != nil {
+			logger.Error("error trying to update auction status to completed", err)
+			return
+		}
 	}()
 
 	return nil
