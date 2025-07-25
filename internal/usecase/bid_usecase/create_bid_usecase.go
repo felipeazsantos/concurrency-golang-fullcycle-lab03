@@ -35,13 +35,13 @@ type BidUseCase struct {
 
 var bidBatch []bidentity.Bid
 
-type BidUseCasesInterface interface {
+type BidUseCaseInterface interface {
 	CreateBid(ctx context.Context, bidInput BidInputDTO) *internalerror.InternalError
 	FindBidByAuctionId(ctx context.Context, auctionId string) ([]BidOutputDTO, *internalerror.InternalError)
 	FindWinningBidByAuctionId(ctx context.Context, auctionId string) (*BidOutputDTO, *internalerror.InternalError)
 }
 
-func NewBidUseCase(bidRepository bidentity.BidRepositoryInterface) BidUseCasesInterface {
+func NewBidUseCase(bidRepository bidentity.BidRepositoryInterface) BidUseCaseInterface {
 	maxBatchSize := getMaxBatchSize()
 	maxBatchSizeInterval := getMaxBatchSizeInterval()
 

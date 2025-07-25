@@ -12,18 +12,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-
 type BidEntityMongo struct {
-	Id        string    `bson:"_id"`
-	UserId    string    `bson:"user_id"`
-	AuctionId string    `bson:"auction_id"`
-	Amount    float64   `bson:"amount"`
-	Timestamp int64 `bson:"timestamp"`
+	Id        string  `bson:"_id"`
+	UserId    string  `bson:"user_id"`
+	AuctionId string  `bson:"auction_id"`
+	Amount    float64 `bson:"amount"`
+	Timestamp int64   `bson:"timestamp"`
 }
 
 type BidRepository struct {
-	Collection *mongo.Collection
+	Collection        *mongo.Collection
 	AuctionRepository *auction.AuctionRepository
+}
+
+func NewBidRepository(database *mongo.Database, auctionRepository *auction.AuctionRepository) *BidRepository {
+	return &BidRepository{
+		Collection:        database.Collection("bids"),
+		AuctionRepository: auctionRepository,
+	}
 }
 
 func (br *BidRepository) CreateBid(
@@ -41,11 +47,11 @@ func (br *BidRepository) CreateBid(
 			auctionEntity, err := br.AuctionRepository.FindAuctionById(ctx, bidValue.AuctionId)
 			if err != nil {
 				logger.Error("Error trying to find auction by id", err)
-				return 
+				return
 			}
 
 			if auctionEntity.Status != auctionentity.Active {
-				return 
+				return
 			}
 
 			bidEntityMongo := &BidEntityMongo{

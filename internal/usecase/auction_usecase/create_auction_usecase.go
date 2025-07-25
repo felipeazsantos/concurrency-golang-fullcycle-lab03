@@ -36,17 +36,34 @@ type ProductCondition int64
 
 type AuctionStatus int64
 
+type AuctionUseCaseInterface interface {
+	CreateAuction(ctx context.Context, auctionInputDTO AuctionInputDTO) *internalerror.InternalError
+	FindAuctionById(ctx context.Context, id string) (*AuctionOutputDTO, *internalerror.InternalError)
+	FindAuctions(ctx context.Context, status AuctionStatus, category string, productName string) ([]AuctionOutputDTO, *internalerror.InternalError)
+	FindWinningBidByAuctionId(ctx context.Context, auctionId string) (*WinningInfoOutputDTO, *internalerror.InternalError)
+}
+
 type AuctionUseCase struct {
 	AuctionRepository auctionentity.AuctionRepositoryInterface
 	BidRepository     bidentity.BidRepositoryInterface
 }
 
-func (au *AuctionUseCase) CreateAuction(ctx context.Context, auctionEntity AuctionInputDTO) *internalerror.InternalError {
+func NewAuctionUseCase(
+	auctionRepository auctionentity.AuctionRepositoryInterface,
+	bidRepository bidentity.BidRepositoryInterface,
+) AuctionUseCaseInterface {
+	return &AuctionUseCase{
+		AuctionRepository: auctionRepository,
+		BidRepository:     bidRepository,
+	}
+}
+
+func (au *AuctionUseCase) CreateAuction(ctx context.Context, auctionInputDTO AuctionInputDTO) *internalerror.InternalError {
 	auction, err := auctionentity.CreateAuction(
-		auctionEntity.ProductName,
-		auctionEntity.Category,
-		auctionEntity.Description,
-		auctionentity.ProductCondition(auctionEntity.Condition),
+		auctionInputDTO.ProductName,
+		auctionInputDTO.Category,
+		auctionInputDTO.Description,
+		auctionentity.ProductCondition(auctionInputDTO.Condition),
 	)
 
 	if err != nil {

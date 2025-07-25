@@ -10,17 +10,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type userController struct {
+type UserController struct {
 	userUseCase userusecase.UserUseCaseInterface
 }
 
-func NewUserController(userUseCase userusecase.UserUseCaseInterface) *userController {
-	return &userController{
+func NewUserController(userUseCase userusecase.UserUseCaseInterface) *UserController {
+	return &UserController{
 		userUseCase: userUseCase,
 	}
 }
 
-func (u *userController) FindUserById(c *gin.Context) {
+func (u *UserController) FindUserById(c *gin.Context) {
 	userId := c.Param("userId")
 
 	if err := uuid.Validate(userId); err != nil {
